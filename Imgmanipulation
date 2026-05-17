@@ -1,0 +1,41 @@
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+image = cv2.imread(r"C:\Users\Bhavya garg\OneDrive\Desktop\Ai\cat.jpg")
+
+cropped_img = image[50:100,30:40]
+image_con2 = cv2.cvtColor(cropped_img,cv2.COLOR_BGR2GRAY)
+plt.imshow(cropped_img)
+plt.title("Cropped Image")
+plt.show()
+
+image_con = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+plt.imshow(image_con)
+plt.title("Image")
+plt.show()
+
+image_con1 = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+plt.imshow(image_con1)
+plt.title("Gray Image")
+plt.show()
+
+
+#Activity 2
+
+(h,w) = image.shape[:2]
+center = (w//2,h//2)
+M = cv2.getRotationMatrix2D(center,45,1.0)
+img = cv2.warpAffine(image,M,(w,h))
+
+con_img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+plt.imshow(con_img)
+plt.show()
+
+bright_matrix = np.ones(image.shape,dtype = 'uint8') * -250
+bright = cv2.add(image,bright_matrix)
+
+con_img1 = cv2.cvtColor(bright,cv2.COLOR_BGR2RGB)
+plt.imshow(con_img1)
+plt.show()
+
+
