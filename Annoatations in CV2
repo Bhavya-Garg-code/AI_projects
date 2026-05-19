@@ -1,0 +1,22 @@
+import cv2 
+import matplotlib.pyplot as mp
+
+image = cv2.imread(r"C:\Users\Bhavya garg\OneDrive\Desktop\Ai\cat.jpg")
+
+image2 = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+
+h,w,_ = image2.shape
+cv2.rectangle(image2,(30,30),(120,120),(237,45,34),2)
+
+c1 = (92,25)
+c2 = (92,238)
+cv2.circle(image2,c1,20,(237,45,34),2)
+cv2.circle(image2,c2,20,(120,45,34),2)
+cv2.line(image2,c1,c2,(237,45,34),2)
+
+font = cv2.FONT_HERSHEY_COMPLEX
+cv2.putText(image2,"Cat",(50,238),font,1.2,(145,34,98),3)
+cv2.arrowedLine(image2,(23,120),(89,120),(60,23,87),2,tipLength=2.1)
+
+mp.imshow(image2)
+mp.show()
