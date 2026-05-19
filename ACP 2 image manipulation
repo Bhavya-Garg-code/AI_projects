@@ -1,0 +1,27 @@
+import cv2
+import matplotlib.pyplot as mp
+import numpy as np
+
+image = cv2.imread(r'C:\Users\Bhavya garg\OneDrive\Desktop\Ai\dog.jpg')
+
+rgb_image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+(h,w) = image.shape[:2]
+
+cent = (w//10,h//10)
+
+rotate = cv2.getRotationMatrix2D(cent, 25, 1)
+rotated_img = cv2.warpAffine(rgb_image,rotate,(w,h))
+
+mp.imshow(rotated_img)
+mp.show()
+
+bright = np.ones(rgb_image.shape, dtype  = 'uint8') * 60
+bright_image = cv2.add(rgb_image,bright)
+
+mp.imshow(bright_image)
+mp.show()
+
+crop = rgb_image[102:111,120:130]
+cropped_image = cv2.cvtColor(crop,cv2.COLOR_BGR2RGB)
+mp.imshow(cropped_image)
+mp.show()
