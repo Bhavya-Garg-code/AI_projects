@@ -1,0 +1,30 @@
+import cv2
+
+image = cv2.imread(r"C:\Users\Bhavya garg\OneDrive\Desktop\Ai\dog.jpg")
+
+print("Small - s")
+print("Medium - m")
+print("Large - l")
+
+inp = input("Enter your input : ").lower()
+
+if(inp == 's'):
+    small = cv2.resize(image, (200,200))
+    cv2.imwrite('Small_dog.jpg',small)
+
+elif(inp == 'm'):
+
+    medium = cv2.resize(image, (400,400))
+    cv2.imshow('medium image',medium)
+    cv2.waitKey(0)
+    cv2.imwrite('Medium_dog.jpg',medium)
+
+elif(inp == 'l'):
+
+    large = cv2.resize(image, (600,600))
+    cv2.imshow('Large image',large)
+    cv2.waitKey(0)
+    cv2.imwrite('Large_dog.jpg',large)
+
+else:
+    print("Not a valid input")
