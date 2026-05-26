@@ -1,0 +1,60 @@
+import cv2
+import matplotlib.pyplot as mp
+import numpy as np
+
+def sho(title,image):
+    mp.imshow(image,cmap = 'gray')
+    mp.title(title)
+    mp.axis('off')
+    mp.show()
+
+def edgeDetect(image):
+    image1 = cv2.imread(image)
+    if (image1 is None):
+        print("Image not found")
+        return 
+    else:
+        img = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+
+        while True:
+            print("1. Sobel Edge Detection")
+            print("2. Canny edge detection")
+            print("3. Laplacian edge detection")
+            print("4. Gaussian Smoothing")
+            print("5. Median filtering")
+            print("6. Exit")
+
+            choice = input("Enter your number: ")
+            if(choice == "1"):
+                sobelx = cv2.Sobel(img, cv2.CV_32F, 1, 0, ksize = 3)
+                sobely = cv2.Sobel(img, cv2.CV_32F, 0, 1, ksize = 3)
+                sobel = cv2.bitwise_or(np.uint8(np.absolute(sobelx)), np.uint8(np.absolute(sobely)))
+                sho('Sobel Edge Detection', sobel)
+            
+            elif(choice == '2'):
+                low = int(input("Enter the low value: "))
+                high = int(input("Enter the high value: "))
+                can = cv2.Canny(img, low, high)
+                sho('Canny Edge detection', can)
+        
+            elif(choice == "3"):
+                lap = cv2.Laplacian(img, cv2.CV_64F)
+                sho("Laplacian Edge Detection", np.abs(lap).astype(np.uint8))
+
+            elif(choice == '4'):
+                ksize = int(input("Enter the kernal size (odd number): "))
+                gauss = cv2.GaussianBlur(image1,(ksize,ksize),0)
+                sho("Gaussian Filtering", gauss)
+                
+            elif(choice == '5'):
+                ksize = int(input("Enter the kernal size (odd number): "))
+                blur = cv2.medianBlur(image1,ksize)
+                sho("Median Blur", blur)
+
+            elif(choice == '6'):
+                print("Exiting.....")
+                break
+            else:
+                print("Please enter a valid choice..")
+
+edgeDetect(r"C:\Users\Bhavya garg\OneDrive\Desktop\Ai\cat.jpg")
