@@ -1,0 +1,66 @@
+import cv2 
+import numpy as np
+
+def filters(image, filter_type):
+    filtered_image = image.copy()
+
+    if(filter_type == "red_tint"):
+        filtered_image[:,:,1] = 0
+        filtered_image[:,:,0] = 0
+
+    elif(filter_type == "blue_tint"):
+        filtered_image[:,:,2] = 0
+        filtered_image[:,:,1] = 0
+
+    elif(filter_type == "green_tint"):
+        filtered_image[:,:,0] = 0
+        filtered_image[:,:,2] = 0
+
+    elif(filter_type == 'increased_red'):
+        filtered_image[:,:,2] = cv2.add(filtered_image[:,:,2], 50)
+
+    elif(filter_type == 'decreased_green'):
+        filtered_image[:,:,1] = cv2.subtract(filtered_image[:,:,1], 50)
+
+    return filtered_image
+
+image = cv2.imread(r"C:\Users\Bhavya garg\OneDrive\Desktop\Ai\cat.jpg")
+if image is None:
+    print("Image not found!!")
+else:
+    filtered_type = 'original'
+    print("Press the given keys for particular filter")
+    print('r. Red Tint')
+    print('g. GreenTint')
+    print('b. Blue Tint')
+    print('i. Increased red ')
+    print('d. Decreased red')
+    print('q. Quit')
+
+    while True:
+        filtered_image = filters(image, filtered_type)
+        cv2.imshow("Filtered Image", filtered_image)
+        key = cv2.waitKey(0)
+        if(key == ord('r')):
+            filtered_type = 'red_tint'
+
+        elif(key == ord('g')):
+            filtered_type = 'green_tint'
+
+        elif(key == ord('b')):
+            filtered_type = 'blue_tint'
+
+        elif(key == ord('i')):
+            filtered_type = 'increased_red'
+
+        elif(key == ord('d')):
+            filtered_type = 'decreased_green'
+
+        elif(key == ord('q')):
+            print("Exiting....")
+            break
+
+        else:
+            print("Not a valid input")
+
+cv2.destroyAllWindows()
