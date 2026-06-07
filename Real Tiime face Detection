@@ -1,0 +1,27 @@
+import cv2
+
+cascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+
+video = cv2.VideoCapture(0)
+
+if not video.isOpened():
+    print("Camera not accessible!!")
+    exit()
+
+while True:
+    ret,face = video.read()
+    if not ret:
+        print("Error occurred!!!")
+        break
+    gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+
+    image = cascade.detectMultiScale(gray, scaleFactor= 1.1, minNeighbors=5, minSize=(30,30))
+    for (x,y,w,h) in image:
+        cv2.rectangle(face, (x,y), (x+w, y+h), (0,255,0), 2)
+    cv2.imshow('Face detected', face)
+
+    if cv2.waitKey(1)and 0xFF == ord('q'):
+        break
+
+video.release()
+cv2.destroyAllWindows()
