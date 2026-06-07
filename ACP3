@@ -1,0 +1,10 @@
+import cv2 
+import matplotlib.pyplot as mp
+
+image = cv2.imread(r'C:\Users\Bhavya garg\OneDrive\Desktop\Ai\dog.jpg')
+
+image1 = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+cv2.arrowedLine(image1,(115,98),(115,4),(0,0,0), tipLength = 0.09)
+cv2.arrowedLine(image1,(115,98),(115,218),(0,0,0), tipLength = 0.09)
+mp.imshow(image1)
+mp.show()
