@@ -1,0 +1,62 @@
+import cv2
+import numpy as np
+
+def filters(image, type):
+    fil_image = image.copy()
+
+    if(type == 'red_tint'):
+        fil_image[:,:,0] = 0
+        fil_image[:,:,1] = 0
+
+    elif(type == 'blue_tint'):
+        fil_image[:,:,1] = 0
+        fil_image[:,:,2] = 0
+    
+    elif(type == 'green_tint'):
+        fil_image[:,:,0] = 0
+        fil_image[:,:,2] = 0
+    
+    elif(type == 'orange_tint'):
+        fil_image[:,:,0] = 0
+        fil_image[:,:,1] = (fil_image[:,:,1]*0.5).astype(np.uint8)
+    
+    elif(type == 'brown_tint'):
+        fil_image[:, :, 0] = (fil_image[:, :, 0] * 0.2).astype(np.uint8)
+        fil_image[:, :, 1] = (fil_image[:, :, 1] * 0.5).astype(np.uint8)
+        fil_image[:, :, 2] = (fil_image[:, :, 2] * 0.7).astype(np.uint8)
+
+    fil_image = fil_image.astype(np.uint8)
+    return fil_image
+
+image = cv2.imread(r'C:\Users\Bhavya garg\OneDrive\Desktop\Ai\dog.jpg')
+if image is None:
+    print("Image not found")
+
+else:
+    filter_type = 'original'
+    print("Choose any of the given filters: ")
+    print("r. Red_tint")
+    print("b. Blue_tint")
+    print("g. Green_tint")
+    print("o. Orange_tint")
+    print("w. Brown tint")
+    print("q. Quit")
+    while True:
+        filtered_image = filters(image,filter_type)
+        cv2.imshow("Filtered_Image", filtered_image)
+        key  = cv2.waitKey(0)
+        if(key == ord('r')):
+            filter_type = 'red_tint'
+        elif(key == ord('b')):
+            filter_type = 'blue_tint'
+        elif(key == ord('g')):
+            filter_type = 'green_tint'
+        elif(key == ord('o')):
+            filter_type = 'orange_tint'
+        elif(key == ord('w')):
+            filter_type = 'brown_tint'
+        elif(key == ord('q')):
+            break
+        else:
+            print('Invalid input')
+cv2.destroyAllWindows()
