@@ -1,0 +1,32 @@
+def add(a,b):
+    return a+b
+
+def subtract(a,b):
+    return a-b
+
+def multiply(a,b):
+    return a*b
+
+def divide(a,b):
+    try:
+          return a/b
+    except ZeroDivisionError:
+        return "Can't divide by zero"
+try:
+ num1 = float(input("Enter first number: "))
+ num2 = float(input("Enter second number: "))
+ choice = input("Enter your operator: ")
+
+ if(choice == '+'):
+    print(add(num1,num2))
+ elif(choice == '-'):
+    print(subtract(num1,num2))
+ elif(choice == '*'):
+    print(multiply(num1,num2))
+ elif(choice == '/'):
+    print(divide(num1,num2))
+ else:
+    print("No such value accepted")
+
+except ValueError:
+    print("Wrong value has been provided!")
