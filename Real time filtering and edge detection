@@ -1,0 +1,60 @@
+import cv2
+
+def filters(image,filter):
+    if filter == 'r':
+        image[:,:,0] = 0
+        image[:,:,1] = 0
+    elif filter == 'b':
+        image[:,:,1] = 0
+        image[:,:,2] = 0
+
+    elif filter == 'g':
+        image[:,:,0] = 0
+        image[:,:,2] = 0
+
+    elif filter == 'y':
+        image[:,:,0] = 0
+
+    elif filter == 's':
+        grey = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        sx = cv2.Sobel(grey,cv2.CV_64F,1,0)
+        sy = cv2.Sobel(grey,cv2.CV_64F,0,1)
+        sobel = cv2.bitwise_or(sx.astype('uint8'), sy.astype('uint8'))
+        image = cv2.cvtColor(sobel,cv2.COLOR_GRAY2BGR)
+
+    elif filter == 'c':
+        gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        can = cv2.Canny(gray,100,200)
+        image = cv2.cvtColor(can,cv2.COLOR_GRAY2BGR)
+
+    return image
+
+cam = cv2.VideoCapture(0)
+filter = 'original'
+print('Press r for red, b for blue, y for yellow, g for green, s for sobel , c for canny')
+
+while True:
+    ret, frame = cam.read()
+    if not ret:
+        print("error occurred")
+        break
+    cv2.imshow('Filters',filters(frame.copy(), filter))
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('s'):
+        filter = 's'
+    elif key == ord('r'):
+        filter = 'r'
+    elif key == ord('g'):
+        filter = 'g'
+    elif key == ord('b'):
+        filter = 'b'
+
+    elif key == ord('y'):
+        filter = 'y'
+    elif key == ord('c'):
+        filter = 'c'
+    elif key == ord('q'):
+        break
+
+cam.release()
+cv2.destroyAllWindows()
