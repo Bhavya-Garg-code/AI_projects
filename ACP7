@@ -1,0 +1,41 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as mp
+
+image = cv2.imread(r'C:\Users\Bhavya garg\OneDrive\Desktop\Ai\dog.jpg')
+if image is None:
+    print("Image not found")
+else:
+  image2 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+  while True:
+    print("Choose an option from below")
+    print("1.Sobel")
+    print("2.Canny")
+    print("3.Laplassian edge detection")
+    print('4.Quit')
+    choice = input("Enter any choice: ")
+
+    if(choice == '1'):
+        ksize_x = int(input("Enter ksize for x: "))
+        ksize_y = int(input("Enter ksize for y: "))
+        sobel_x = cv2.Sobel(image2,cv2.CV_32F, 1,0,ksize = ksize_x)
+        sobel_y = cv2.Sobel(image2,cv2.CV_32F, 0,1,ksize = ksize_y)
+        sobel = cv2.bitwise_or(np.uint8(np.absolute(sobel_x)), np.uint8(np.absolute(sobel_y)))
+        mp.imshow(sobel,cmap = 'gray')
+        mp.show()
+    
+    elif(choice == '2'):
+        lower = int(input("Enter lower limit: "))
+        upper = int(input("Enter upper limit: "))
+        can = cv2.Canny(image2,lower,upper)
+        mp.imshow(can,cmap = 'gray')
+        mp.show()
+    
+    elif(choice == '3'):
+       lap = cv2.Laplacian(image2, cv2.CV_32F)
+       mp.imshow(np.abs(lap).astype(np.uint8))
+       mp.show()
+    elif (choice == '4'):
+       print("Exiting....")
+       break
+cv2.destroyAllWindows()
