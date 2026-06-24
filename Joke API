@@ -1,0 +1,26 @@
+import requests 
+
+def joke():
+    url = 'https://official-joke-api.appspot.com/random_joke'
+    respone = requests.get(url)
+
+    if(respone.status_code == 200):
+        print("Full response: ",respone.json())
+        json = respone.json()
+        return f'{json['setup']}, {json['punchline']}'
+    
+    else:
+        return "Failed to fetch response"
+
+def main():
+    print("Welcome to jooke generator")
+    while True:
+        user = input("Press enter to get a new joke or q to quit: ")
+        if(user == 'q'):
+            print("Exiting....")
+            break
+        else:
+            joke1 = joke()
+            print(joke1)
+
+main()
