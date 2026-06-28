@@ -1,0 +1,53 @@
+import random
+import requests
+import html
+
+EDUCATION_CATEGORY_ID = 9
+
+url = f'https://opentdb.com/api.php?amount=10&category={EDUCATION_CATEGORY_ID}&type=multiple'
+
+def extract():
+    response = requests.get(url)
+    if(response.status_code == 200):
+        data = response.json()
+        if(data['response_code'] == 0 and data['results']):
+            return data['results']
+    return None
+
+def run_quiz():
+    questions = extract()
+    if not questions:
+        print("Failed to extract questions")
+        return 
+    score = 0
+    print("Welcome to the quiz")
+    for i,q in enumerate(questions,1):
+        ques = html.unescape(q['question'])
+        correct = html.unescape(q['correct_answer'])
+        incorrect = [html.unescape(a) for a in q['incorrect_answers']]
+
+        options = incorrect + [correct]
+        random.shuffle(options)
+        print(f'Q{i}: {ques}')
+        
+        for e,option in enumerate(options,1):
+            print(f'{e}.{option}')
+        while True:
+            try:
+                choice = int(input("Enter your answer(1-4): "))
+                if(1 <= choice <= 4):
+                    break
+            except ValueError:
+                pass
+            print("Invalid option given!!")
+        if(options[choice-1] == correct):
+            print("Correct answer!!")
+            score += 1
+        else:
+            print("Wrong answer")
+            print(f'Correct Answer {correct}')
+
+    print(f"Score : {score}/{len(questions)}")
+    print(f'Percentage: {score/len(questions)*100:.1f}%')
+
+run_quiz()
