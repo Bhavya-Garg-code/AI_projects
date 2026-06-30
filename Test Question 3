@@ -1,0 +1,29 @@
+dict = {'Alice':34,'Aman':56,'Ritu':98,'Alex':87,'Rohan':100}
+avg = 0
+sum = 0
+for i in dict.values():
+    sum += i
+    avg = sum/len(dict.values())
+print("Average: ",avg)
+
+minimum = min(dict.values())
+maximum = max(dict.values())
+
+for n,j in dict.items():
+    if(j == minimum):
+        print(f"Low scorer is: {n} with a score of : {j}")
+    if(j == maximum):
+        print(f"Top scorer is: {n} with a score of : {j}")
+
+while True:
+    user = input("Enter name of student")
+    if(user not in dict):
+        print("Student name not found!!")
+        continue
+    print(f'Score: {dict.get(user)}')
+    inp = input("Would you like continue(y/n)").lower()
+    if(inp == "y"):
+        continue
+    else:
+        print("Exiting...")
+        break
