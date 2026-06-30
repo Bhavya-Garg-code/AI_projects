@@ -1,0 +1,51 @@
+import cv2
+import numpy as np
+import screen_brightness_control as sbc
+import mediapipe as mp
+mo_hands = mp.solutions.hands
+hands = mo_hands.Hands(min_detection_confidence = 0.7, min_tracking_confidence = 0.7)
+draw = mp.solutions.drawing_utils
+thumb_tip = mo_hands.HandLandmark.THUMB_TIP
+index_tip = mo_hands.HandLandmark.INDEX_FINGER_TIP
+
+cam = cv2.VideoCapture(0)
+if not cam.isOpened():
+    print("camera not accessible!!")
+    exit()
+
+while True:
+    ret, img = cam.read()
+    if not ret:
+        print("Error occured!")
+        break
+    img = cv2.flip(img,1)
+    h,w = img.shape[:2]
+    rgb = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+
+    results = hands.process(rgb)
+    if results.multi_hand_landmarks:
+        for hand in results.multi_hand_landmarks:
+            draw.draw_landmarks(img,hand,mo_hands.HAND_CONNECTIONS)
+            lm = hand.landmark
+            x1,y1 = int(lm[thumb_tip].x*w),int(lm[thumb_tip].y*h)
+            x2,y2 = int(lm[index_tip].x*w),int(lm[index_tip].y*h)
+            cv2.circle(img,(x1,y1),10,(255,0,0),cv2.FILLED)
+            cv2.circle(img,(x2,y2),10,(255,0,0),cv2.FILLED)
+            cv2.line(img,(x1,y1),(x2,y2),(0,0,255),3)
+
+            distance = np.hypot(x2-x1,y2-y1)
+            brightness = int(np.interp(distance,[30,300],[0,100]))
+            brightness = np.clip(brightness,300)
+            try:
+                sbc.set_brightness(brightness)
+            except:
+                pass
+            bar = int(np.interp(distance,[30,300],[40,150]))
+            cv2.rectangle(img,(50,150),(85,400),(0,0,255),2)
+            cv2.rectangle(img,(50,bar),(85,400),(0,0,255),cv2.FILLED)
+            cv2.putText(img,brightness,(40,440),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2)
+    cv2.imshow('Brightness',img)
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        break
+cam.release()
+cv2.destroyAllWindows()
