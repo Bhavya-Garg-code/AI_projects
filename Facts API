@@ -1,0 +1,18 @@
+import requests 
+
+
+url = "https://uselessfacts.jsph.pl/api/v2/facts/random?language=en"
+def random_facts():
+    response = requests.get(url)
+    if response.status_code == 200:
+        facts = response.json()
+        print(f"Did you know {facts['text']}")
+    else:
+        print("Failed to extract facts")
+
+while True:
+    inp = input("Press enter to generate random facts or q to quit: ")
+    if(inp.lower() == 'q'):
+        print("Exiting....")
+        break
+    random_facts()
