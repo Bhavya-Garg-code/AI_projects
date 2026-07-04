@@ -1,0 +1,28 @@
+import requests
+
+api = 'HG_API_KEY'
+
+url = "https://router.huggingface.co/hf-inference/models/facebook/bart-large-mnli"
+
+header = {'Authorization' : f"Bearer {api}"}
+topics = ['sports','technology','business','politics','health']
+
+while True:
+    headline = input("Enter your headline or x for exit: ")
+    if(headline.lower() == 'x'):
+        break
+    payload = {
+        'inputs': headline,
+        'parameters':{
+            'candidate_labels':topics
+        }
+    }
+    try:
+        response = requests.post(url,headers=header , json = payload)
+        result = response.json()
+        best = max(result, key = lambda x : x['score'])
+        print("Headine",headline)
+        print("Topic: ",best['label'])
+        print("Confidence: ", round(best['score']*100 ,2),"%")
+    except Exception as e:
+        print("Error : ",e)
