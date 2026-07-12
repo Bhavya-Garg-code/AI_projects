@@ -1,0 +1,26 @@
+import requests
+from colorama import Fore,init
+
+init(autoreset=True)
+url = "https://router.huggingface.co/hf-inference/models/facebook/bart-large-cnn"
+api_key = 'MY_API_KEY'
+
+def summarize(x):
+    r = requests.post(url,headers = {'Authorization ':f"Bearer {api_key}"}, json= {'inputs':f'{x}'} )
+    try:
+        return r.json()[0]['summary_text']
+    except:
+        return 'Error occured'
+    
+print(Fore.MAGENTA +"Welcome to text summarizier..")
+name = input(Fore.GREEN +"Enter your name: ").strip().title()
+text = input(Fore.CYAN+ "Enter your text: ").strip()
+if not text:
+    print(Fore.RED + "No text Entered!!!")
+else:
+    summary = summarize(text)
+    print(Fore.GREEN + f"Summary for {name}..")
+    if summary:
+        print(Fore.WHITE + summary)
+    else:
+        print(Fore.RED + "Failed to generate summary")
