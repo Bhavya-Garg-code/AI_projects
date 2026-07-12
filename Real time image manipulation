@@ -1,0 +1,36 @@
+import cv2
+import numpy as np
+
+cam= cv2.VideoCapture(0)
+if not cam.isOpened():
+    print("Camera is not opening")
+    exit()
+cv2.namedWindow("rotation")
+def a (x):
+    pass 
+def b(x):
+    pass
+
+cv2.createTrackbar('angle','rotation',0,360,a)
+cv2.createTrackbar('brightness','rotation',0,100,a)
+while True:
+    ret,frame = cam.read()
+    if not ret:
+       print("Failed to grab frame")
+       break
+    angle = cv2.getTrackbarPos('angle','rotation')
+    bright = cv2.getTrackbarPos('brightness','rotation')
+    (h,w) = frame.shape[:2]
+
+    center = (w//2,h//2)
+    rot_mat = cv2.getRotationMatrix2D(center,angle,1)
+    img = cv2.warpAffine(frame,rot_mat,(w,h))
+    
+    bright_matrix = np.ones(frame.shape,dtype = 'uint8') * bright
+    img = cv2.add(img,bright_matrix)
+    cv2.imshow("rotation",img)
+
+    if(cv2.waitKey(1) & 0xFF == ord('q')):
+         break
+cam.release()
+cv2.destroyAllWindows()
