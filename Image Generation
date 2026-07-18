@@ -1,0 +1,48 @@
+from huggingface_hub import InferenceClient
+from datetime import datetime
+from PIL import Image
+
+models = [
+
+"ByteDance/SDXL-Lightning",
+
+"stabilityai/stable-diffusion-xl-base-1.0",
+
+"stabilityai/sdxl-turbo",
+
+"runwayml/stable-diffusion-v1-5"
+
+]
+api = 'API_KEY'
+
+client = InferenceClient(api_key = api)
+
+print(f'Primary model: {models[0]}')
+print("Type q for exit:")
+
+while True:
+    prompt = input("Enter your prompt: ").strip()
+    if(prompt.lower() == 'q'):
+        print("Exiting...")
+        break
+    if not prompt:
+        continue
+    print("Generating...")
+    image = None
+    for model in models:
+      try:
+          image = client.text_to_image(prompt,model = model)
+          break
+      except Exception as e:
+          print("Error occured",e)
+          continue
+      
+    if image:
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        file = f'Generated_{timestamp}.jpg'
+        image.save(file)
+        print("Image generated")
+        image.show()
+        print()
+    # else:
+    #     print('Error Occured..')
