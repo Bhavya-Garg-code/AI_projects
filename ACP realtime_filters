@@ -1,0 +1,43 @@
+import cv2
+
+image = cv2.imread(r'C:\Users\Bhavya garg\OneDrive\Desktop\Ai\dog.jpg')
+
+def filters(image,filter):
+    image = image.copy()
+    if(filter == 'r'):
+        image[:,:,0] = 0
+        image[:,:,1] = 0
+    elif(filter == 'g'):
+        image[:,:,0] = 0
+        image[:,:,2] = 0
+    elif(filter == 'b'):
+        image[:,:,1] = 0
+        image[:,:,2] = 0
+    elif(filter == 'c'):
+        img = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        can = cv2.Canny(img,100,200)
+        image = cv2.cvtColor(can,cv2.COLOR_GRAY2BGR)
+    elif(filter == 's'):
+        img = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        sx = cv2.Sobel(img,cv2.CV_64F,1,0)
+        sy = cv2.Sobel(img,cv2.CV_64F,0,1)
+        sob = cv2.bitwise_or(sx.astype('uint8'),sy.astype('uint8'))
+        image = cv2.cvtColor(sob,cv2.COLOR_GRAY2BGR)
+    return image
+
+print("Press r for red, b for blue, g for green,c for Canny edge detection, s for Sobel edge detection")
+fil = 'original'
+current_fil = 'o'
+while True:
+    result = filters(image,current_fil)
+    cv2.imshow("Image",result)
+    key = cv2.waitKey(0) & 0xFF 
+    if(key == ord('q')):
+        print("Exiting...")
+        break
+    elif key in [ord('r'),ord('b'),ord('g'),ord('c'),ord('s')]:
+        current_fil = chr(key)
+
+cv2.destroyAllWindows()
+
+        
