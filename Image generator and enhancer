@@ -1,0 +1,65 @@
+import time 
+import requests
+from io import BytesIO
+from PIL import Image,ImageEnhance,ImageFilter
+
+Api = "APIKEY"
+
+Models = [
+
+"black-forest-labs/FLUX.1-schnell",
+
+"stabilityai/stable-diffusion-xl-base-1.0",
+
+"stabilityai/stable-diffusion-3-medium-diffusers"
+
+]
+
+headers = {
+    'Authorization':f'Bearer {Api}',
+    'Accept':'image/png'
+}
+
+def Generate(prompt):
+    for model in Models:
+        url = f"https://router.huggingface.co/hf-inference/models/{model}"
+        print(f'Trying {model}')
+        for _ in range(3):
+            response = requests.post(url,headers = headers,json = {'inputs': prompt},timeout = 180)
+            if response.status_code == 503:
+                t = response.json().get('estimated_time',5)
+                print(f"Loading.... {t}s")
+                time.sleep(t+1)
+                continue
+            content = response.headers.get("content-type", "").lower()
+
+            if response.status_code == 200 and "image" in content:
+                    print("Image generated successfully!")
+                    return Image.open(BytesIO(response.content)).convert("RGB")
+
+                # Error returned by API
+            print(f"Failed ({response.status_code})")
+            print(response.text)
+
+            last_error = response.text
+            break
+    raise Exception("Image failed to generate...")
+def process(img):
+    return ImageEnhance.Contrast(ImageEnhance.Brightness(img).enhance(0.67)).enhance(1.6).filter(ImageFilter.GaussianBlur(3))
+print("Welome to image Generator")
+while True:
+    inp = input("Enter your prompt").lower().strip()
+    if(inp == 'q'):
+        print("Exiting....")
+        break
+    try:
+        img = process(Generate(inp))
+        img.show()
+        if input("Save (y/n)? ").lower() == 'y':
+            name = input("Filename: ").strip() or 'generated Image'
+            img.save(f'{name}.jpg')
+            print("Saved!")
+        else:
+            pass
+    except Exception as e:
+        print("Error",e)
