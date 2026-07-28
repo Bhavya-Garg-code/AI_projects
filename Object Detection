@@ -1,0 +1,56 @@
+import requests
+from PIL import Image, ImageDraw
+
+model = "facebook/detr-resnet-101"
+
+api = f"https://router.huggingface.co/hf-inference/models/{model}"
+
+hf_api = 'APiKEY'
+
+path = input("Enter the path of the image")
+
+with open(path, 'rb') as file:
+    image = file.read()
+
+headers = {
+    'Authorization':f'Bearer {hf_api}',
+    'Content-Type': 'image/png'
+}
+
+response = requests.post(api, headers = headers,  data = image)
+
+if response.status_code != 200:
+    print("Error Occured", response.text)
+    exit()
+
+detections = response.json()
+
+image1 = Image.open(path)
+
+draw = ImageDraw.Draw(image1)
+
+for obj in detections:
+    if obj['score'] > 0.1:
+        box = obj['box']
+        x1 = box['xmin']
+        y1 = box['ymin']
+        x2 = box['xmax']
+        y2 = box['ymax']
+
+        draw.rectangle([x1,y1,x2,y2], outline = 'green', width =2 )
+        draw.text([x1+20,y1+20],obj['label'],fill = 'green')
+
+print("Do you want to save the image")
+choice = input("y/n?: ").strip().lower()
+if choice == 'y' :
+    out = 'Image.jpg'
+    image1.save(out)
+    print("Image is saved")
+
+print('Objects detected: ')
+for obj in detections:
+    score = obj.get("score",0)
+    if (score > 0.1):
+        print(f"{obj['label']} - {score:.2f}")
+
+image1.show()
