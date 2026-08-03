@@ -1,0 +1,56 @@
+import time 
+import requests
+from io import BytesIO
+from PIL import Image,ImageEnhance,ImageFilter
+
+Api = "MYAPI"
+
+Models = [
+
+"black-forest-labs/FLUX.1-schnell",
+
+"stabilityai/stable-diffusion-xl-base-1.0",
+
+"stabilityai/stable-diffusion-3-medium-diffusers"
+
+]
+
+headers = {
+    'Authorization':f'Bearer {Api}',
+    'Accept':'image/jpg'
+}
+
+def Generate(prompt):
+    for model in Models:
+        url = f"https://router.huggingface.co/hf-inference/models/{model}"
+        print(f'Trying {model}')
+        for _ in range(3):
+            r = requests.post(url,headers = headers,json = {'inputs': prompt},timeout = 180)
+            if r.status_code == 503:
+                t = r.json().get('estimated_time',5)
+                print(f"Loading.... {t}s")
+                time.sleep(t+1)
+                continue
+            if r.ok and 'image' in r.headers.get('content-type',""):
+                return Image.open(BytesIO(r.content)).convert("RGB")
+        break
+    raise Exception("Image failed to generate...")
+def process(img):
+    return ImageEnhance.Contrast(ImageEnhance.Brightness(img).enhance(0.67)).enhnace(1.6).filter(ImageFilter.GaussianBlur(3))
+print("Welome to image Generator")
+while True:
+    inp = input("Enter your prompt").lower().strip()
+    if(inp == 'q'):
+        print("Exiting....")
+        break
+    try:
+        img = process(Generate(inp))
+        img.show()
+        if input("Save (y/n)? ").lower() == 'y':
+            name = input("Filename: ").strip() or 'generated Image'
+            img.save(f'{name}.jpg')
+            print("Saved!")
+        else:
+            pass
+    except Exception as e:
+        print("Error",e)
