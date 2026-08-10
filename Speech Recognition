@@ -1,0 +1,48 @@
+import pyaudio
+import speech_recognition as sr
+import wave
+import threading
+
+rate = 16000
+chunk = 1024
+channels = 1
+pa = pyaudio.paInt16
+filename = input("Enter your file: ")
+filename = filename +'.wav'
+
+p = pyaudio.PyAudio()
+a = p.open(format = pa, channels = channels, rate = rate, input = True, frames_per_buffer = chunk)
+stop_rec = False
+frames = []
+
+def stop_rec1():
+    global stop_rec
+    input()
+    stop_rec = True
+
+threading.Thread(target = stop_rec1).start()
+
+while not stop_rec:
+    frames.append(a.read(chunk))
+a.stop_stream()
+a.close()
+p.terminate()
+print("Your recording has been stopped....")
+
+with wave.open(filename,'wb') as wf:
+    wf.setnchannels(channels)
+    wf.setsampwidth(p.get_sample_size(pa))
+    wf.setframerate(rate)
+    wf.writeframes(b"".join(frames))
+
+print("Recording has stopped!")
+recognizer = sr.Recognizer()
+
+with sr.AudioFile(filename) as src:
+    audio = recognizer.record(src)
+
+try:
+    text = recognizer.recognize_google(audio)
+    print(f"Transcription: {text}")
+except :
+    print("Could not transcribe")
