@@ -1,0 +1,72 @@
+import pyaudio
+import threading
+import numpy as np
+import wave
+import speech_recognition as sr
+import matplotlib.pyplot  as mp
+
+rate = 16000
+chunks = 1024
+format = pyaudio.paInt16
+channels = 1
+filename = input("Enter your filename: ")
+filename = filename +'.wav'
+print("Press enter to stop recording")
+pa = pyaudio.PyAudio()
+stream = pa.open(format = format, channels = channels, rate = rate, input = True, frames_per_buffer = chunks)
+frames = []
+stop = False
+def stop_recording():
+    global stop
+    input()
+    stop = True
+threading.Thread(target = stop_recording).start()
+
+while not stop:
+    frames.append(stream.read(chunks, exception_on_overflow= False))
+
+stream.stop_stream()
+stream.close()
+samp_width = pa.get_sample_size(format)
+pa.terminate()
+print("recoding has been stopped")
+
+with wave.open(filename, 'wb') as w:
+    w.setnchannels(channels)
+    w.setsampwidth(samp_width)
+    w.setframerate(rate)
+    w.writeframes(b''.join(frames))
+
+print("Recording saved with filename: ",filename)
+
+Sr = sr.Recognizer()
+
+with sr.AudioFile(filename) as src:
+    audio = Sr.record(src)
+
+try:
+    a = Sr.recognize_google(audio)
+    print('Transcription: ',a)
+
+except Exception as e:
+    print("Could not transcribe",e)
+
+audio_data = b''.join(frames)
+sample = np.frombuffer(audio_data, dtype = np.int16)
+max_amp = np.max(sample)
+min_amp = np.min(sample)
+mean = np.mean(np.abs(sample))
+peak_amp = np.max(np.abs(sample))
+print("Max Amplitude: ",max_amp)
+print("Min Amplitude: ",min_amp)
+print("Peak Amplitude: ",peak_amp)
+print("Mean Amplitude: ",mean)
+time = np.arange(len(sample))/rate
+mp.figure(figsize=(12,5))
+mp.plot(time, sample)
+mp.title("Voice Waveform")
+mp.xlabel("Time (seconds)")
+mp.ylabel("Amplitude")
+mp.grid(True)
+mp.show()
+
