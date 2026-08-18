@@ -1,0 +1,27 @@
+from googletrans import Translator
+import speech_recognition as sr
+
+def speech_to_text():
+
+     r = sr.Recognizer()
+     with sr.Microphone() as src:
+          print("Listening...")
+          li = r.listen(src)
+     try:
+          audio = r.recognize_google(li,language = 'en-US')
+          print("You: ",audio)
+          return audio
+     except:
+          print("Can't hear you")
+          return ""
+def translate(text):
+     tra = Translator()
+     user = input("Enter the language code: ")
+     result = tra.translate(text, src ='en', dest = user)
+     print("Translated text: ",result.text)
+text = speech_to_text()
+if text:
+     translate(text)
+else:
+     print("No text found.")
+    
