@@ -1,0 +1,24 @@
+from openai import OpenAI
+
+api = 'My API
+client = OpenAI(api_key = api,base_url = 
+"https://api.groq.com/openai/v1")
+model = 'openai/gpt-oss-20b'
+
+def command(prompt):
+    try:
+        response = client.chat.completions.create(model = model, messages = [{'role':'user','content': prompt}], temperature=0.3, max_tokens = 1024)
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error occured {e}")
+
+print('AI tutorial')
+
+gen_inp = input("Enter a general prompt: ")
+print(command(gen_inp))
+print('\n \n \n \n')
+specific_inp = input("Enter a specific prommpt: ")
+print(command(specific_inp))
+print('\n \n \n \n')
+contextual_inp = input("Enter a contextual prommpt: ")
+print(command(contextual_inp))
