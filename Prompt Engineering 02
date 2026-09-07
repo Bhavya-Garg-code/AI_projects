@@ -1,0 +1,43 @@
+from openai import OpenAI
+import time
+
+api = 'My API'
+client = OpenAI(api_key = api,base_url = 
+"https://api.groq.com/openai/v1")
+model = 'openai/gpt-oss-20b'
+
+def generate(prompt,temp):
+    try:
+       response = client.chat.completions.create(
+           model = model,
+           messages = [{'role': 'user','content':prompt}],
+           temperature=temp,
+           max_tokens = 1024
+        
+       )
+       return response.choices[0].message.content
+    except Exception as e:
+        return 'Error occured',e
+
+def main():
+    print("Welcome to prompt engineering.")
+    prompt = input("Enter your prompt: ")
+    try:
+      temp = float(input("Enter the temperature (0.1-1.0): "))
+    except:
+       temp = 0.7
+    print(f"Temperature is : {temp}")
+    print(generate(prompt, temp))
+    print('\n\n\n\n')
+
+    topic = input("Enter a topic: ")
+    p = [
+       f'Summarize {topic}',
+       f'Explain {topic} to a ten year old kid',
+       f'Generate a headline for {topic}'
+    ]
+    for a in p:
+       print(a,'\n\n\n\n')
+       print(generate(a,temp=temp))
+
+main()
