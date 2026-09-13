@@ -1,0 +1,33 @@
+from openai import OpenAI
+import time
+
+api = 'My API'
+client = OpenAI(api_key = api,base_url = 
+"https://api.groq.com/openai/v1")
+model = 'openai/gpt-oss-20b'
+
+def generate(prompt,temp):
+ try:
+    gen = client.chat.completions.create(
+      model = model,
+      messages = [{'role': 'user', 'content': prompt}],
+      temperature= temp,
+      max_tokens= 1024
+    )
+    return gen.choices[0].message.content
+ except Exception as e:
+   print("An Error occcured: ",e)
+
+cat = input("Enter the category: ")
+item = input("Enter the item")
+
+prompts = {
+  'Zero shot': f' Is {item} of {cat} Answer Yes/No \n',
+  'One shot':f' Example : Apple is a fruit, Is {item} of {cat} Answer Yes/No\n',
+  'Few shots':f' Examples: Apple is a fruit,\n Car is a machine, Cotton is a fabric, Is {item} of {cat}, Answer Yes/No',
+  'Creative':f'Write a short sentece on {item}'
+}
+
+for t,i in prompts.items():
+  print(f'{t}')
+  print(generate(i,0.7 if t == 'Creative' else 0.3))
