@@ -1,0 +1,44 @@
+from openai import OpenAI
+import time
+
+api = 'My Api'
+client = OpenAI(api_key = api,base_url = 
+"https://api.groq.com/openai/v1")
+model = 'openai/gpt-oss-20b'
+
+def generate(prompt,temp):
+    try:
+        response = client.chat.completions.create(
+            model = model,
+            messages = [{'role':'user','content':prompt}],
+            temperature=temp,
+            max_tokens=1024
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print("Error occured ",e)
+
+print("welcome to prompt engg")
+user = input("1. Reinforcement learning \n 2. Role based learing \n: ")
+
+if(user == '1'):
+    pro = input("Enter prompt: ")
+    cont = generate(pro,0.4)
+    print("original: ",cont)
+    rate = input("Enter rating(1-10): ")
+    feed = input("Enter feedback: ")
+    improved = f'Improve the response {cont} based on rating {rate} and feedback {feed} and generate an improved and enhanced response'
+    print('\n\n\n\n\nImproved: ',generate(improved,0.3))
+
+elif(user == '2'):
+    cat = input("Enter category: ")
+    topic = input("Enter topic: ")
+    prompts = {
+        'Teacher':f'You are a teacher of this category {cat} and explain the {topic} simply',
+        'Expert':f'You are an expert in category{cat} and explain the {topic}  technically'
+    }
+    for t,p in prompts.items():
+        print(f'-----{t}-----')
+        print(generate(p,0.4))
+else:
+    print("Invalid Input")
