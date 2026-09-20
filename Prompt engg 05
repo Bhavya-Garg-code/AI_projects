@@ -1,0 +1,60 @@
+from openai import OpenAI
+import time
+
+api = 'My API'
+client = OpenAI(api_key = api,base_url = 
+"https://api.groq.com/openai/v1")
+model = 'openai/gpt-oss-20b'
+
+def generate(prompt, tokens = 1024):
+ try:
+    response = client.chat.completions.create(
+        model = model,
+        messages = [{'role':'user','content':prompt}],
+        temperature=0.3,
+        max_tokens = tokens
+    )
+    return response.choices[0].message.content
+ except Exception as e:
+   return f'Error Occured : {e}'
+
+def bias_mitigation():
+  inp = input("Enter your prompt: ")
+  if(inp):
+    res = generate(inp)
+    print('Initial response: ',res)
+  else:
+    print("Please enter a prompt to continue: ")
+    return
+  inp2 = input("Enter a neutral prompt: ")
+  if(inp2):
+      res2 = generate(inp)
+      print('Initial response: ',res2)
+  else:
+      print("Please enter a prompt to continue: ")
+      return
+
+def token_limit():
+   inp = input("Enter a long prompt: ")
+   if(inp):
+      res = generate(inp)
+      print(res)
+   else:
+      print("Enter a long prompt: ")
+      return
+   inp2 = input("Enter a short prompt: ")
+   if(inp2):
+    res1 = generate(inp2, tokens = 500)
+    print(res1)
+   else:
+      print("Enter a short prompt: ")
+      return
+
+choices = input('Enter youyr choice (1/2): ')
+if(choices == '1'):
+   bias_mitigation()
+elif(choices == '2'):
+   token_limit()
+else:
+   print("Not a valid choice")
+   
