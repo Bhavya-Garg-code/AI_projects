@@ -1,0 +1,51 @@
+from openai import OpenAI
+import time
+
+api = 'My API'
+client = OpenAI(api_key = api,base_url = 
+"https://api.groq.com/openai/v1")
+model = 'openai/gpt-oss-20b'
+
+def generate(prompt, temp):
+ try:
+    response = client.chat.completions.create(
+        model = model,
+        messages = [{'role':'user','content':prompt}],
+        temperature=temp,
+        max_tokens = 1024
+    )
+    return response.choices[0].message.content
+ except Exception as e:
+   return f'Error Occured : {e}'
+
+
+print("Welcome to essay generator")
+essay = input("Enter topic: ")
+type = input("enter type of  essay: ")
+audience = input("Enter the audience for the essay:  ")
+length = int(input("Enter the word limit [300,600,1200,1500]: "))
+le = [300,600,1200,1500][length-1]
+
+try:
+  temp = float(input("Enter temperature: "))
+except:
+  temp = 0.3
+
+intro = generate(f'Write an intro based on {essay}  which of type {type} for the target audience {audience}', temp)
+
+print('Introduction: ',intro)
+
+inp = input("Enter the choice for type of essay 1) full body length , 2) analytical step by step manner: ")
+if (inp == '1'):
+  prompt = f'Write a full body essay based on {essay}  which of type {type} for the target audience {audience} for word limit {le}'
+  result = generate(prompt,temp)
+  print('Your essay is: ',result)
+elif(inp == '2'):
+  prompt = f'Give step by step arguments and evidences with examples based on {essay}  which of type {type} for the target audience {audience} for word limit {le}'
+  result = generate(prompt,temp)
+  print('Your essay is: ',result)
+  conclusion = f'Give a final wording on {essay}'
+  conc = generate(conclusion,temp)
+  print("Conclusion: ",conc)
+else:
+  print("Not a valid input")
